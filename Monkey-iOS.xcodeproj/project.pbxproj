@@ -13,14 +13,14 @@
 		9D87E1431BAB8B75008D2A0C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9D87E1411BAB8B75008D2A0C /* Main.storyboard */; };
 		9D87E1451BAB8B75008D2A0C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9D87E1441BAB8B75008D2A0C /* Assets.xcassets */; };
 		9D87E1481BAB8B75008D2A0C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9D87E1461BAB8B75008D2A0C /* LaunchScreen.storyboard */; };
-		9D87E1501BAB8BFD008D2A0C /* LabelNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D87E14F1BAB8BFD008D2A0C /* LabelNode.swift */; settings = {ASSET_TAGS = (); }; };
-		9D87E1521BAB8CE7008D2A0C /* Enumerations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D87E1511BAB8CE6008D2A0C /* Enumerations.swift */; settings = {ASSET_TAGS = (); }; };
-		9D87E1541BAB8CF6008D2A0C /* Level1.json in Resources */ = {isa = PBXBuildFile; fileRef = 9D87E1531BAB8CF6008D2A0C /* Level1.json */; settings = {ASSET_TAGS = (); }; };
-		9D87E15B1BAB8D03008D2A0C /* Banana.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 9D87E1561BAB8D03008D2A0C /* Banana.m4a */; settings = {ASSET_TAGS = (); }; };
-		9D87E15C1BAB8D03008D2A0C /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 9D87E1571BAB8D03008D2A0C /* Credits.rtf */; settings = {ASSET_TAGS = (); }; };
-		9D87E15D1BAB8D03008D2A0C /* GameOver.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 9D87E1581BAB8D03008D2A0C /* GameOver.m4a */; settings = {ASSET_TAGS = (); }; };
-		9D87E15E1BAB8D03008D2A0C /* Jump.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 9D87E1591BAB8D03008D2A0C /* Jump.m4a */; settings = {ASSET_TAGS = (); }; };
-		9D87E15F1BAB8D03008D2A0C /* Message.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 9D87E15A1BAB8D03008D2A0C /* Message.m4a */; settings = {ASSET_TAGS = (); }; };
+		9D87E1501BAB8BFD008D2A0C /* LabelNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D87E14F1BAB8BFD008D2A0C /* LabelNode.swift */; };
+		9D87E1521BAB8CE7008D2A0C /* Enumerations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D87E1511BAB8CE6008D2A0C /* Enumerations.swift */; };
+		9D87E1541BAB8CF6008D2A0C /* Level1.json in Resources */ = {isa = PBXBuildFile; fileRef = 9D87E1531BAB8CF6008D2A0C /* Level1.json */; };
+		9D87E15B1BAB8D03008D2A0C /* Banana.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 9D87E1561BAB8D03008D2A0C /* Banana.m4a */; };
+		9D87E15C1BAB8D03008D2A0C /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 9D87E1571BAB8D03008D2A0C /* Credits.rtf */; };
+		9D87E15D1BAB8D03008D2A0C /* GameOver.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 9D87E1581BAB8D03008D2A0C /* GameOver.m4a */; };
+		9D87E15E1BAB8D03008D2A0C /* Jump.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 9D87E1591BAB8D03008D2A0C /* Jump.m4a */; };
+		9D87E15F1BAB8D03008D2A0C /* Message.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 9D87E15A1BAB8D03008D2A0C /* Message.m4a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
