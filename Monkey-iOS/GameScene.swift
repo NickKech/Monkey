@@ -33,7 +33,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     var isJumping = false
     
-    var gameState = GameState.Ready
+    var gameState = GameState.ready
     
     /* 1 */
     var distanceLabel = LabelNode(fontNamed: "Gill Sans Bold Italic") // See Page 57 in Chapter 3
@@ -59,7 +59,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
 
-    override func didMoveToView(view: SKView) {
+    override func didMove(to view: SKView) {
         /* Init Physics World */
         initPhysicsWorld()
         
@@ -89,14 +89,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     // MARK: - Init Physics World
     func initPhysicsWorld() {
         /* 1 */
-        physicsWorld.gravity = CGVectorMake(0, -20)
+        physicsWorld.gravity = CGVector(dx: 0, dy: -20)
         
         /* 2 */
         physicsWorld.contactDelegate = self
     }
     
-    func didBeginContact(contact: SKPhysicsContact) {
-        if gameState != GameState.Playing {
+    func didBegin(_ contact: SKPhysicsContact) {
+        if gameState != GameState.playing {
             return
         }
         
@@ -105,24 +105,24 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let catB = contact.bodyB.categoryBitMask;
         
         
-        if catA == ColliderCategory.Grass.rawValue || catB == ColliderCategory.Grass.rawValue {
+        if catA == ColliderCategory.grass.rawValue || catB == ColliderCategory.grass.rawValue {
             /* 2 */
             monkeyRun()
             isJumping = false
             
-        } else if catA == ColliderCategory.Spikes.rawValue || catB == ColliderCategory.Spikes.rawValue {
+        } else if catA == ColliderCategory.spikes.rawValue || catB == ColliderCategory.spikes.rawValue {
             /* Game Over */
-            runAction(soundGameOver)
+            run(soundGameOver)
             gameOver()
             showMessage("GameOver")
-        } else if catA == ColliderCategory.Enemy.rawValue || catB == ColliderCategory.Enemy.rawValue {
+        } else if catA == ColliderCategory.enemy.rawValue || catB == ColliderCategory.enemy.rawValue {
             /* Game Over */
-            runAction(soundGameOver)
+            run(soundGameOver)
             gameOver()
             showMessage("GameOver")
-        } else if catA == ColliderCategory.Banana.rawValue || catB == ColliderCategory.Banana.rawValue {
+        } else if catA == ColliderCategory.banana.rawValue || catB == ColliderCategory.banana.rawValue {
             /* Level Completed */
-            runAction(soundBanana)
+            run(soundBanana)
             gameOver()
             showMessage("LevelCompleted")
         }
@@ -134,14 +134,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     // MARK: - Init Background
     func initBackground() {
         /* 1 */
-        backgroundLayer.zPosition = zOrderValue.Background.rawValue
+        backgroundLayer.zPosition = zOrderValue.background.rawValue
         addChild(backgroundLayer)
         
         /* 2 */
         for index in 0 ... 1 {
             let background = SKSpriteNode(imageNamed: "Background")
             background.name = "Background"
-            background.anchorPoint = CGPointZero
+            background.anchorPoint = CGPoint.zero
             background.position = CGPoint(x: CGFloat(index) * background.size.width, y: 0)
             backgroundLayer.addChild(background)
         }
@@ -153,9 +153,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         /* 2 */
         backgroundLayer.position = CGPoint(x: backgroundLayer.position.x + CGFloat(stepX), y: 0)
         /* 3 */
-        backgroundLayer.enumerateChildNodesWithName("Background") { (child, index) in
+        backgroundLayer.enumerateChildNodes(withName: "Background") { (child, index) in
             /* 4 */
-            let backgroundPosition = self.backgroundLayer.convertPoint(child.position, toNode: self)
+            let backgroundPosition = self.backgroundLayer.convert(child.position, to: self)
             /* 5 */
             if backgroundPosition.x <= -child.frame.size.width {
                 child.position = CGPoint(x: child.position.x + child.frame.size.width * 2, y: child.position.y)
@@ -166,14 +166,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     // MARK: - Init Clouds
     func initClouds() {
         /* 1 */
-        cloudsLayer.zPosition = zOrderValue.Clouds.rawValue
+        cloudsLayer.zPosition = zOrderValue.clouds.rawValue
         addChild(cloudsLayer)
         
         /* 2 */
         for index in 1 ... 2 {
             let cloud = SKSpriteNode(imageNamed: "Cloud-\(index)")
             cloud.name = "Cloud"
-            cloud.anchorPoint = CGPointZero
+            cloud.anchorPoint = CGPoint.zero
             cloud.position = CGPoint(x: size.width * 0.50 * CGFloat(index - 1), y: size.height - cloud.size.height)
             cloudsLayer.addChild(cloud)
         }
@@ -185,9 +185,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         /* 2 */
         cloudsLayer.position = CGPoint(x: cloudsLayer.position.x + CGFloat(stepX), y: 0)
         /* 3 */
-        cloudsLayer.enumerateChildNodesWithName("Cloud") { (child, index) in
+        cloudsLayer.enumerateChildNodes(withName: "Cloud") { (child, index) in
             /* 4 */
-            let cloudsPosition = self.cloudsLayer.convertPoint(child.position, toNode: self)
+            let cloudsPosition = self.cloudsLayer.convert(child.position, to: self)
             /* 45 */
             if cloudsPosition.x <= -child.frame.size.width {
                 child.position = CGPoint(x: child.position.x + self.size.width * 2, y: child.position.y)
@@ -196,14 +196,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     // MARK: - Load Level
-    func loadLevelFromFile(filename: String) -> [String : AnyObject] {
+    func loadLevelFromFile(_ filename: String) -> [String : Any] {
         /* 1 */
-        let path = NSBundle.mainBundle().pathForResource(filename, ofType: nil)
+        let path = Bundle.main.path(forResource: filename, ofType: nil)
         
         /* 2 */
-        var data: NSData!
+        var data: Data!
         do {
-            data = try NSData(contentsOfFile: path!, options: NSDataReadingOptions())
+            data = try Data(contentsOf: URL(fileURLWithPath: path!), options: NSData.ReadingOptions())
         } catch {
             print("Error: Invalid file")
         }
@@ -211,18 +211,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         /* 3 */
         var dictionary: NSDictionary!
         do {
-            dictionary = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions()) as! NSDictionary
+            dictionary = try JSONSerialization.jsonObject(with: data!, options: JSONSerialization.ReadingOptions()) as! NSDictionary
         } catch {
             print("Error: Invalid file format")
         }
         
         /* 4 */
-        return dictionary["Level"] as! [String : AnyObject]
+        return dictionary["Level"] as! [String : Any]
     }
 
-    func loadLevel(filename: String) {
+    func loadLevel(_ filename: String) {
         /* 1 */
-        foregroundLayer.zPosition = zOrderValue.Foreground.rawValue
+        foregroundLayer.zPosition = zOrderValue.foreground.rawValue
         addChild(foregroundLayer)
         
         /* 2 */
@@ -230,7 +230,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         /* 3 */
         for index in 0 ..< levelData.count {
-            let section = levelData["Section-\(index + 1)"] as! [String : AnyObject]
+            let section = levelData["Section-\(index + 1)"] as! [String : Any]
             /* 4 */
             let groundData = section["Ground"] as! [Int]
             /* 5 */
@@ -244,7 +244,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
-    func drawGround(data: [Int], sectionIndex: Int, line: Int) {
+    func drawGround(_ data: [Int], sectionIndex: Int, line: Int) {
         /* 1 */
         let tileSize = CGSize(width: 64, height: 64)
         
@@ -261,7 +261,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
 
-    func addTile(imageNamed: String, location: CGPoint) {
+    func addTile(_ imageNamed: String, location: CGPoint) {
         /* 1 */
         let tile = SKSpriteNode(imageNamed: imageNamed)
         tile.position = location
@@ -269,15 +269,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         foregroundLayer.addChild(tile)
         
         /* 2 */
-        tile.physicsBody = SKPhysicsBody(rectangleOfSize: tile.size)
-        tile.physicsBody?.dynamic = false
+        tile.physicsBody = SKPhysicsBody(rectangleOf: tile.size)
+        tile.physicsBody?.isDynamic = false
         
         /* 3 */
-        tile.physicsBody?.categoryBitMask = ColliderCategory.Grass.rawValue
+        tile.physicsBody?.categoryBitMask = ColliderCategory.grass.rawValue
     }
 
 
-    func drawGrass(data: [Int], sectionIndex: Int) {
+    func drawGrass(_ data: [Int], sectionIndex: Int) {
         /* 1 */
         let tileSize = CGSize(width: 64, height: 64)
         
@@ -328,25 +328,25 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         /* 1 */
         monkey = SKSpriteNode(imageNamed: "Monkey-1")
         monkey.name = "Monkey"
-        monkey.zPosition = zOrderValue.Monkey.rawValue
+        monkey.zPosition = zOrderValue.monkey.rawValue
         monkey.position = CGPoint(x: size.width * 0.25, y: size.height * 0.50)
         addChild(monkey)
         
         /* 2 */
-        monkey.physicsBody = SKPhysicsBody(rectangleOfSize: CGSize(width: monkey.size.width * 0.65, height: monkey.size.height))
+        monkey.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: monkey.size.width * 0.65, height: monkey.size.height))
         monkey.physicsBody?.restitution = 0.0
         monkey.physicsBody?.allowsRotation = false
         /* 3 */
-        monkey.physicsBody?.categoryBitMask = ColliderCategory.Monkey.rawValue
+        monkey.physicsBody?.categoryBitMask = ColliderCategory.monkey.rawValue
         /* 4 */
-        monkey.physicsBody?.collisionBitMask = ColliderCategory.Grass.rawValue
+        monkey.physicsBody?.collisionBitMask = ColliderCategory.grass.rawValue
         /* 5 */
-        monkey.physicsBody?.contactTestBitMask = ColliderCategory.Grass.rawValue
+        monkey.physicsBody?.contactTestBitMask = ColliderCategory.grass.rawValue
     }
     
     func monkeyRun() {
         /* 1 */
-        if monkey.actionForKey("kMonkeyRun") == nil {
+        if monkey.action(forKey: "kMonkeyRun") == nil {
             /* 2 */
             var textures = [SKTexture]()
             for index in 1 ... 7 {
@@ -355,13 +355,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
             
             /* 3 */
-            let animate = SKAction.animateWithTextures(textures, timePerFrame: 0.10)
+            let animate = SKAction.animate(with: textures, timePerFrame: 0.10)
             
             /* 4 */
-            let forever = SKAction.repeatActionForever(animate)
+            let forever = SKAction.repeatForever(animate)
             
             /* 5 */
-            monkey.runAction(forever, withKey: "kMonkeyRun")
+            monkey.run(forever, withKey: "kMonkeyRun")
         }
     }
     
@@ -369,14 +369,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         /* 1 */
         monkey.removeAllActions()
         /* 2 */
-        monkey.runAction(SKAction.setTexture(SKTexture(imageNamed: "Monkey-Jump")))
+        monkey.run(SKAction.setTexture(SKTexture(imageNamed: "Monkey-Jump")))
     }
     
     func monkeyStop() {
         /* 1 */
         monkey.removeAllActions()
         /* 2 */
-        monkey.runAction(SKAction.setTexture(SKTexture(imageNamed: "Monkey-1")))
+        monkey.run(SKAction.setTexture(SKTexture(imageNamed: "Monkey-1")))
     }
     
     // MARK: - Game States
@@ -394,12 +394,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     
     func gameOver() {
-        gameState = .GameOver
+        gameState = .gameOver
         monkeyStop()
         
         /* Resets Game */
-        removeActionForKey("kSpawnBirds")
-        enumerateChildNodesWithName("Bird") { (child, index) in
+        removeAction(forKey: "kSpawnBirds")
+        enumerateChildNodes(withName: "Bird") { (child, index) in
             child.removeFromParent()
         }
         
@@ -408,35 +408,35 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
 
     
-    func showMessage(imageNamed: String) {
+    func showMessage(_ imageNamed: String) {
         /* 1 */
         let panel = SKSpriteNode(imageNamed: imageNamed)
-        panel.zPosition = zOrderValue.Message.rawValue
+        panel.zPosition = zOrderValue.message.rawValue
         panel.position = CGPoint(x: size.width * 0.65, y: -size.height)
         panel.name = imageNamed
         addChild(panel)
         
         /* 2 */
-        let move = SKAction.moveTo(CGPoint(x: size.width * 0.65, y: size.height * 0.50), duration: 0.5)
-        panel.runAction(SKAction.sequence([soundMessage, move]))
+        let move = SKAction.move(to: CGPoint(x: size.width * 0.65, y: size.height * 0.50), duration: 0.5)
+        panel.run(SKAction.sequence([soundMessage, move]))
     }
 
     // MARK: - Add HUD
     func addHUD() {
         /* 1 */
         distanceLabel.fontSize = 48
-        distanceLabel.zPosition = zOrderValue.Hud.rawValue
+        distanceLabel.zPosition = zOrderValue.hud.rawValue
         distanceLabel.position = CGPoint(x: size.width * 0.25, y: size.height - 48)
         distanceLabel.text = "Distance: \(distance)"
-        distanceLabel.fontColor = SKColor.yellowColor()
+        distanceLabel.fontColor = SKColor.yellow
         addChild(distanceLabel)
         
         /* 2 */
         bestDistanceLabel.fontSize = 48
-        bestDistanceLabel.zPosition = zOrderValue.Hud.rawValue
+        bestDistanceLabel.zPosition = zOrderValue.hud.rawValue
         bestDistanceLabel.position = CGPoint(x: size.width * 0.75, y: size.height - 48)
         bestDistanceLabel.text = "Best: \(best)"
-        bestDistanceLabel.fontColor = SKColor.yellowColor()
+        bestDistanceLabel.fontColor = SKColor.yellow
         addChild(bestDistanceLabel)
         
         /* 3 */
@@ -451,18 +451,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     // MARK: - Save/Load Best score
     func saveBestDistance() {
         if distance >= loadBestDistance() {
-            NSUserDefaults.standardUserDefaults().setInteger(best, forKey: "kBest")
-            NSUserDefaults.standardUserDefaults().synchronize()
+            UserDefaults.standard.set(distance, forKey: "kBest")
+            UserDefaults.standard.synchronize()
         }
     }
     
     func loadBestDistance() -> Int {
-        return NSUserDefaults.standardUserDefaults().integerForKey("kBest")
+        return UserDefaults.standard.integer(forKey: "kBest")
     }
     
     
     // MARK: - Add Spikes
-    func addSpikes(imageNamed: String, location: CGPoint) {
+    func addSpikes(_ imageNamed: String, location: CGPoint) {
         /* 1 */
         let spikes = SKSpriteNode(imageNamed: imageNamed)
         spikes.position = location
@@ -471,19 +471,19 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         /* 2 */
         let center = CGPoint(x: 0, y: -spikes.size.height * 0.25)
-        spikes.physicsBody = SKPhysicsBody(rectangleOfSize: CGSize(width: spikes.size.width, height: spikes.size.height * 0.50), center: center)
-        spikes.physicsBody?.dynamic = false
+        spikes.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: spikes.size.width, height: spikes.size.height * 0.50), center: center)
+        spikes.physicsBody?.isDynamic = false
         
         /* 3 */
-        spikes.physicsBody?.categoryBitMask = ColliderCategory.Spikes.rawValue
+        spikes.physicsBody?.categoryBitMask = ColliderCategory.spikes.rawValue
         /* 4 */
-        spikes.physicsBody?.collisionBitMask = ColliderCategory.Monkey.rawValue
+        spikes.physicsBody?.collisionBitMask = ColliderCategory.monkey.rawValue
         /* 5 */
-        spikes.physicsBody?.contactTestBitMask = ColliderCategory.Monkey.rawValue
+        spikes.physicsBody?.contactTestBitMask = ColliderCategory.monkey.rawValue
     }
     
     // MARK: - Add Snake
-    func addSnake(imageNamed: String, location: CGPoint) {
+    func addSnake(_ imageNamed: String, location: CGPoint) {
         /* 1 */
         let snake = SKSpriteNode(imageNamed: imageNamed)
         snake.position = location
@@ -492,18 +492,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         /* 2 */
         snake.physicsBody = SKPhysicsBody(circleOfRadius: snake.size.height * 0.50)
-        snake.physicsBody?.dynamic = false
+        snake.physicsBody?.isDynamic = false
         
         /* 3 */
-        snake.physicsBody?.categoryBitMask = ColliderCategory.Enemy.rawValue
+        snake.physicsBody?.categoryBitMask = ColliderCategory.enemy.rawValue
         /* 4 */
-        snake.physicsBody?.collisionBitMask = ColliderCategory.Monkey.rawValue
+        snake.physicsBody?.collisionBitMask = ColliderCategory.monkey.rawValue
         /* 5 */
-        snake.physicsBody?.contactTestBitMask = ColliderCategory.Monkey.rawValue
+        snake.physicsBody?.contactTestBitMask = ColliderCategory.monkey.rawValue
     }
 
     // MARK: - Add Banana
-    func addBanana(imageNamed: String, location: CGPoint) {
+    func addBanana(_ imageNamed: String, location: CGPoint) {
         /* 1 */
         let banana = SKSpriteNode(imageNamed: imageNamed)
         banana.position = location
@@ -512,22 +512,22 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         /* 2 */
         banana.physicsBody = SKPhysicsBody(circleOfRadius: banana.size.width * 0.50)
-        banana.physicsBody?.dynamic = false
+        banana.physicsBody?.isDynamic = false
         
         /* 3 */
-        banana.physicsBody?.categoryBitMask = ColliderCategory.Banana.rawValue
+        banana.physicsBody?.categoryBitMask = ColliderCategory.banana.rawValue
         
         /* 4 */
-        banana.physicsBody?.collisionBitMask = ColliderCategory.Monkey.rawValue
+        banana.physicsBody?.collisionBitMask = ColliderCategory.monkey.rawValue
         
         /* 5 */
-        banana.physicsBody?.contactTestBitMask = ColliderCategory.Monkey.rawValue
+        banana.physicsBody?.contactTestBitMask = ColliderCategory.monkey.rawValue
     }
 
 
     // MARK: - Update
-    override func update(currentTime: CFTimeInterval) {
-        if gameState != .Playing {
+    override func update(_ currentTime: TimeInterval) {
+        if gameState != .playing {
             return
         }
         /* 1 */
@@ -552,42 +552,42 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     
-    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         /* 1 */
-        if gameState == .Playing {
+        if gameState == .playing {
             if !isJumping {
                 /* 2 */
-                runAction(soundJump)
+                run(soundJump)
                 /* 3 */
                 monkeyJump()
                 /* 4 */
-                monkey.physicsBody?.applyImpulse(CGVectorMake(0, 220))
+                monkey.physicsBody?.applyImpulse(CGVector(dx: 0, dy: 220))
                 /* 5 */
                 isJumping = true
             }
         }
         
         /* 2 */
-        if gameState == .Ready {
-            let startGameMessage = childNodeWithName("StartGame") as! SKSpriteNode
-            gameState = .Playing
+        if gameState == .ready {
+            let startGameMessage = childNode(withName: "StartGame") as! SKSpriteNode
+            gameState = .playing
             startGameMessage.removeFromParent()
             startGame()
         }
         
         /* 3 */
-        if gameState == .GameOver {
+        if gameState == .gameOver {
             startNewGame()
         }
         
 
     }
     
-    override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
    
     }
     
-    override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
    
     }
     
