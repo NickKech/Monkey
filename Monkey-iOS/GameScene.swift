@@ -70,7 +70,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         initClouds()
         
         /* Load Level */
-        loadLevel("Level1.json")
+        loadLevel(filename: "Level1.json")
         
         /* Add Monkey */
         addMonkey()
@@ -82,7 +82,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         addHUD()
         
         /* Show Message: Start Game */
-        showMessage("StartGame")
+        showMessage(imageNamed: "StartGame")
     }
     
     
@@ -114,17 +114,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             /* Game Over */
             run(soundGameOver)
             gameOver()
-            showMessage("GameOver")
+            showMessage(imageNamed: "GameOver")
         } else if catA == ColliderCategory.enemy.rawValue || catB == ColliderCategory.enemy.rawValue {
             /* Game Over */
             run(soundGameOver)
             gameOver()
-            showMessage("GameOver")
+            showMessage(imageNamed: "GameOver")
         } else if catA == ColliderCategory.banana.rawValue || catB == ColliderCategory.banana.rawValue {
             /* Level Completed */
             run(soundBanana)
             gameOver()
-            showMessage("LevelCompleted")
+            showMessage(imageNamed: "LevelCompleted")
         }
         
     }
@@ -196,7 +196,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     // MARK: - Load Level
-    func loadLevelFromFile(_ filename: String) -> [String : Any] {
+    func loadLevelFromFile(filename: String) -> [String : Any] {
         /* 1 */
         let path = Bundle.main.path(forResource: filename, ofType: nil)
         
@@ -220,13 +220,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         return dictionary["Level"] as! [String : Any]
     }
 
-    func loadLevel(_ filename: String) {
+    func loadLevel(filename: String) {
         /* 1 */
         foregroundLayer.zPosition = zOrderValue.foreground.rawValue
         addChild(foregroundLayer)
         
         /* 2 */
-        let levelData = loadLevelFromFile(filename)
+        let levelData = loadLevelFromFile(filename: filename)
         
         /* 3 */
         for index in 0 ..< levelData.count {
@@ -234,17 +234,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             /* 4 */
             let groundData = section["Ground"] as! [Int]
             /* 5 */
-            drawGround(groundData, sectionIndex: index, line: 0)
-            drawGround(groundData, sectionIndex: index, line: 1)
+            drawGround(data: groundData, sectionIndex: index, line: 0)
+            drawGround(data: groundData, sectionIndex: index, line: 1)
             
             /* 6 */
             let grassData = section["Grass"] as! [Int]
             /* 7 */
-            drawGrass(grassData, sectionIndex: index)
+            drawGrass(data: grassData, sectionIndex: index)
         }
     }
     
-    func drawGround(_ data: [Int], sectionIndex: Int, line: Int) {
+    func drawGround(data: [Int], sectionIndex: Int, line: Int) {
         /* 1 */
         let tileSize = CGSize(width: 64, height: 64)
         
@@ -256,12 +256,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 let xPos = tileSize.width * CGFloat(index + sectionIndex * data.count) + tileSize.width * 0.50
                 let yPos = tileSize.height * 0.50 + tileSize.height * CGFloat(line)
                 /* 4 */
-                addTile("Ground", location: CGPoint(x: xPos, y: yPos))
+                addTile(imageNamed: "Ground", location: CGPoint(x: xPos, y: yPos))
             }
         }
     }
 
-    func addTile(_ imageNamed: String, location: CGPoint) {
+    func addTile(imageNamed: String, location: CGPoint) {
         /* 1 */
         let tile = SKSpriteNode(imageNamed: imageNamed)
         tile.position = location
@@ -277,7 +277,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
 
 
-    func drawGrass(_ data: [Int], sectionIndex: Int) {
+    func drawGrass(data: [Int], sectionIndex: Int) {
         /* 1 */
         let tileSize = CGSize(width: 64, height: 64)
         
@@ -292,20 +292,20 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 /* 4 */
                switch tileID {
                 case 2:
-                    addTile("Grass", location: CGPoint(x: xPos, y: yPos))
+                    addTile(imageNamed: "Grass", location: CGPoint(x: xPos, y: yPos))
                     break
                 case 3:
-                    addSpikes("Spikes", location: CGPoint(x: xPos, y: yPos))
+                    addSpikes(imageNamed: "Spikes", location: CGPoint(x: xPos, y: yPos))
                     break
                 case 4:
                     /* Add Snake */
-                    addSnake("Snake", location: CGPoint(x: xPos, y: yPos + tileSize.height))
-                    addTile("Grass", location: CGPoint(x: xPos, y: yPos))
+                    addSnake(imageNamed: "Snake", location: CGPoint(x: xPos, y: yPos + tileSize.height))
+                    addTile(imageNamed: "Grass", location: CGPoint(x: xPos, y: yPos))
                     break
                 case 5:
                     /* Add Banana */
-                    addBanana("Banana", location: CGPoint(x: xPos, y: yPos + tileSize.height))
-                    addTile("Grass", location: CGPoint(x: xPos, y: yPos))
+                    addBanana(imageNamed: "Banana", location: CGPoint(x: xPos, y: yPos + tileSize.height))
+                    addTile(imageNamed: "Grass", location: CGPoint(x: xPos, y: yPos))
                     break
                 default:
                     ()
@@ -408,7 +408,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
 
     
-    func showMessage(_ imageNamed: String) {
+    func showMessage(imageNamed: String) {
         /* 1 */
         let panel = SKSpriteNode(imageNamed: imageNamed)
         panel.zPosition = zOrderValue.message.rawValue
@@ -462,7 +462,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     
     // MARK: - Add Spikes
-    func addSpikes(_ imageNamed: String, location: CGPoint) {
+    func addSpikes(imageNamed: String, location: CGPoint) {
         /* 1 */
         let spikes = SKSpriteNode(imageNamed: imageNamed)
         spikes.position = location
@@ -483,7 +483,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     // MARK: - Add Snake
-    func addSnake(_ imageNamed: String, location: CGPoint) {
+    func addSnake(imageNamed: String, location: CGPoint) {
         /* 1 */
         let snake = SKSpriteNode(imageNamed: imageNamed)
         snake.position = location
@@ -503,7 +503,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
 
     // MARK: - Add Banana
-    func addBanana(_ imageNamed: String, location: CGPoint) {
+    func addBanana(imageNamed: String, location: CGPoint) {
         /* 1 */
         let banana = SKSpriteNode(imageNamed: imageNamed)
         banana.position = location

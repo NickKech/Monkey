@@ -59,10 +59,10 @@ class LabelNode: SKNode {
     init(fontNamed: String) {
         super.init()
         /* Add Label */
-        addLabel(fontNamed)
+        addLabel(fontNamed: fontNamed)
         
         /* Add Shadow */
-        addShadow(fontNamed)
+        addShadow(fontNamed: fontNamed)
     }
     
     /* 4 */
@@ -70,7 +70,7 @@ class LabelNode: SKNode {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func addLabel(_ fontNamed: String) {
+    func addLabel(fontNamed: String) {
         label = SKLabelNode(fontNamed: fontNamed)
         label.fontColor = fontColor
         label.zPosition = 1
@@ -78,7 +78,7 @@ class LabelNode: SKNode {
         addChild(label)
     }
     
-    func addShadow(_ fontNamed: String) {
+    func addShadow(fontNamed: String) {
         shadow = SKLabelNode(fontNamed: fontNamed)
         shadow.fontColor = shadowColor
         shadow.zPosition = 0
